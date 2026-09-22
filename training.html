@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#071b2f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Captain Upgrade Training Movie</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#071b2f;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",Arial,sans-serif}
+.wrap{min-height:100vh;display:flex;flex-direction:column}.top{padding:18px 16px 10px;text-align:center}.eyebrow{font-size:11px;letter-spacing:1.5px;opacity:.65;font-weight:800}.title{font-size:24px;font-weight:800;margin:5px 0}.sub{font-size:13px;opacity:.7}
+.stage{flex:1;display:flex;align-items:center;justify-content:center;padding:14px}.card{width:min(760px,100%);min-height:55vh;background:#102a44;border:1px solid #29455e;border-radius:22px;padding:28px 22px;display:flex;flex-direction:column;justify-content:center;box-shadow:0 20px 50px #0005}.section{font-size:12px;color:#66b7ff;font-weight:900;letter-spacing:1px;text-transform:uppercase}.h{font-size:31px;line-height:1.08;font-weight:850;margin:10px 0 16px}.body{font-size:20px;line-height:1.5;color:#e8f0f7}.key{margin-top:20px;padding:14px 16px;border-radius:13px;background:#071b2f;border:1px solid #35536d;font-size:17px;line-height:1.45}.controls{padding:12px 16px 20px;background:#061525;position:sticky;bottom:0}.buttons{display:flex;gap:8px;max-width:760px;margin:auto}.btn{flex:1;border:0;border-radius:12px;padding:13px 8px;font-weight:800;font-size:15px;background:#1c78c9;color:white}.btn.secondary{background:#20384d}.progress{max-width:760px;margin:0 auto 9px;height:5px;background:#29455e;border-radius:5px;overflow:hidden}.bar{height:100%;width:0;background:#66b7ff}.counter{text-align:center;font-size:12px;opacity:.6;margin-top:7px}.quiz{margin-top:22px}.answer{display:block;width:100%;text-align:left;margin:8px 0;padding:13px;border:1px solid #46647c;border-radius:11px;background:#17334d;color:#fff;font-size:16px}.answer.correct{background:#155b3b}.answer.wrong{background:#6b3030}.note{font-size:11px;opacity:.55;margin-top:14px;line-height:1.4}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top"><div class="eyebrow">GOJET • CAPTAIN UPGRADE</div><div class="title">Upgrade Training Movie</div><div class="sub">Tap Play to hear the guide spoken aloud.</div></header>
+<main class="stage"><article class="card" id="card"></article></main>
+<footer class="controls"><div class="progress"><div class="bar" id="bar"></div></div><div class="buttons"><button class="btn secondary" onclick="prev()">Back</button><button class="btn" id="play" onclick="toggle()">▶ Play</button><button class="btn secondary" onclick="next()">Next</button></div><div class="counter" id="counter"></div></footer>
+</div>
+<script>
+const S=[
+["START HERE","Captain mindset","The upgrade guide emphasizes preparation, systems knowledge, immediate-action items, and the ability to explain an aircraft system in plain language.","Your job is not just to know the answer. Know where the answer comes from, how the system works, and how you would apply it as Captain."],
+["GOM","Flight time & weather minimums","A takeoff alternate is required when departure weather is below the applicable landing minimums. The guide references GOM 3-2.4.9 and the applicable Operations Specifications.","Remember the basic structure: departure weather, alternate requirement, and the one-engine-inoperative time or distance limitation."],
+["GOM","Destination alternate — 1-2-3 rule","The guide states that an alternate is required when, for one hour before or after ETA, the destination forecast or report indicates a ceiling below 2,000 feet or visibility below 3 statute miles.","Think: one hour on either side of ETA; 2,000-foot ceiling; 3-mile visibility. Then verify the current controlled manual and OpSpecs."],
+["OP SPECS","Derived minimums","The guide covers one-navigation-facility and two-navigation-facility alternate methods. The one-nav method adds 400 feet to the applicable CAT I HAT or HAA and 1 SM to visibility. The two-nav method adds 200 feet to the higher HAT and one-half SM to the higher visibility.","Know the concept, then verify the exact current OpSpec before using a number operationally."],
+["PERFORMANCE","Aircraft limited by codes","The guide gives the memory aid C-V-B-A-O-D-T-F-S: climb, Vmcg, brakes, maximum AFM weight, obstacle, dry-runway weight check, tires, field, and maximum structural takeoff weight.","The point is to know what can limit takeoff performance and recognize the code on the performance paperwork."],
+["SOP","Rejected takeoff","Know the rejected-takeoff procedure and the immediate actions required by the current SOP. The study guide specifically points to SOP 1-4.21.","Immediate-action items should be known verbatim. Use the current controlled SOP for the exact wording and sequence."],
+["SOP","Engine failure at or after V1","The guide identifies the engine failure or fire at or after V1 procedure in SOP 1-4.23.9.","The training focus is recognition, directional control, flight-path control, configuration, and disciplined use of the checklist and SOP."],
+["SOP","Emergency descent","The study guide points to SOP 1-5.11.3.","Know the trigger, crew coordination, aircraft configuration, ATC communication, and checklist flow. Exact actions come from the current SOP."],
+["SOP","Approaches","The guide calls out precision ILS, CANPA, partial slat/flap, visual circling, visual, and single-engine approaches.","Be able to explain when each approach type applies and what changes with one engine inoperative. Verify current company procedures."],
+["SOP","Go-around","The guide identifies SOP 1-7.5.1 and single-engine go-around 1-7.5.3.","Know the callouts, configuration changes, flight path, thrust management, and when the single-engine procedure changes the sequence."],
+["SOP","Windshear recovery","The guide identifies SOP 1-10.3.11 for windshear recovery.","This is a memory-level maneuver. Use the current controlled SOP and aircraft-specific memory items rather than relying on this movie for operational execution."],
+["SYSTEMS","Systems knowledge","The guide expects you to explain systems as if speaking to someone who knows nothing about airplanes.","Practice a simple pattern: source → control → distribution → indication → protection → failure indications → crew response."],
+["ENGINES","CF34 basics","The guide describes the CF34 as a dual-rotor high-bypass turbofan. N1 is the fan/low-pressure rotor and N2 is the compressor/high-pressure rotor.","Know the major components, what drives them, how FADEC and variable geometry work, and what the major cockpit indications mean."],
+["ENGINES","Thrust reverser","The study guide identifies cascade vanes, blocker doors, torque box, and translating cowl as major thrust-reverser components.","Know the conditions required for deployment and the cockpit indications associated with the system."],
+["BLEED AIR","Air conditioning & pressurization","The guide identifies bleed air from compressor stages as the source for air conditioning and pressurization.","Be able to trace the air from the engine through the bleed system into the air-conditioning and pressurization system."],
+["ELECTRICAL","Electrical system","The guide describes engine-driven generators, an APU generator, an air-driven generator, transformer-rectifier units, and batteries.","For an oral exam, explain normal sources first, then what happens when a source is lost."],
+["HYDRAULICS","Hydraulic system","The guide identifies engine-driven pumps and AC motor pumps as hydraulic sources.","Know the system architecture, what each pump supplies, normal indications, and the effects of losing a source."],
+["FUEL","Fuel system","The study guide describes three tanks, wing and center capacity, electric pumps, and ejectors used for transfer, scavenge, and primary functions.","Know normal fuel flow and what the crew sees when a pump or transfer function is unavailable."],
+["MEL","MEL fundamentals","The guide directs you to read the MEL preamble and understand repair categories A through D and the deferral process.","Do not memorize isolated numbers without understanding the category, start point, operational procedures, placarding, and required maintenance actions."],
+["SECURITY","Flightdeck security","The guide references SSIM material covering entrance into the cockpit, flightdeck door policy, weapons, FFDOs, Federal Air Marshal procedures, and threat levels.","For the oral, know where to find the current policy and how you would respond without improvising security procedures."],
+["WINTER OPS","Deicing and contamination","The guide covers Type I and Type IV fluids, holdover times, modification of holdover time, pre-takeoff checks, tactile checks, ice pellets, and special winter-operation airports.","The core concept is simple: clean aircraft, correct fluid, correct procedure, and a valid contamination check before takeoff."],
+["LAHSO","LAHSO","The guide states that the Captain has final authority to accept or decline LAHSO and must determine capability promptly after being notified.","Know the operational limitations, runway requirements, weather requirements, and company procedure in the current manual."],
+["SECURITY","Study strategy","Do not try to memorize the entire guide in one pass.","First pass: understand. Second pass: locate the source. Third pass: verbalize. Fourth pass: scenario drill. Fifth pass: closed-book recall."],
+["CHECK","Oral-exam question","What are the three numbers in the destination-alternate 1-2-3 rule described in this study guide?","Answer: one hour before/after ETA, 2,000-foot ceiling, 3 statute miles visibility. Verify current company material before operational use."],
+["CHECK","Oral-exam question","What does the performance-code memory aid C-V-B-A-O-D-T-F-S help you remember?","Answer: climb, Vmcg, brakes, maximum AFM weight, obstacle, dry-runway weight check, tires, field, and maximum structural takeoff weight."],
+["FINISH","Captain standard","The goal is not merely passing a checkride. Build the habit of knowing the procedure, knowing where it lives, and being able to explain the reasoning behind it.","Use this movie as a study aid only. Current GoJet controlled manuals, QRH, SOP, GOM, MEL, and Operations Specifications remain the operational authority."]
+];
+let i=0,playing=false,timer=null,voices=[];
+const card=document.getElementById("card"),bar=document.getElementById("bar"),counter=document.getElementById("counter"),play=document.getElementById("play");
+function render(){let s=S[i];card.innerHTML='<div class="section">'+s[0]+'</div><div class="h">'+s[1]+'</div><div class="body">'+s[2]+'</div><div class="key">'+s[3]+'</div><div class="note">Training aid based on the supplied Captain Upgrade Study Guide. Always use current controlled company publications for operational decisions.</div>';bar.style.width=((i+1)/S.length*100)+'%';counter.textContent=(i+1)+' / '+S.length;if(playing)speak();}
+function speak(){speechSynthesis.cancel();let s=S[i];let u=new SpeechSynthesisUtterance(s[1]+'. '+s[2]+' '+s[3]);u.rate=.92;u.pitch=1;u.onend=()=>{if(playing){if(i<S.length-1){i++;render()}else{playing=false;play.textContent='▶ Play'}}};speechSynthesis.speak(u)}
+function toggle(){if(playing){playing=false;speechSynthesis.cancel();play.textContent='▶ Play'}else{playing=true;play.textContent='❚❚ Pause';speak()}}
+function next(){playing=false;speechSynthesis.cancel();if(i<S.length-1)i++;render();play.textContent='▶ Play'}
+function prev(){playing=false;speechSynthesis.cancel();if(i>0)i--;render();play.textContent='▶ Play'}
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#071b2f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>GoJet CRJ550 Reference Finder</title>
+
+<style>
+:root{
+--navy:#071b2f;
+--blue:#1478d4;
+--bg:#f3f6f9;
+--card:#fff;
+--text:#102033;
+--muted:#647487;
+--line:#dce4eb;
+--warn:#fff4d7;
+}
+*{box-sizing:border-box}
+html,body{
+margin:0;
+background:var(--bg);
+font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",Arial,sans-serif;
+color:var(--text);
+}
+.top{
+background:linear-gradient(180deg,#0a3156,var(--navy));
+color:#fff;
+padding:22px 16px 18px;
+position:sticky;
+top:0;
+z-index:5;
+}
+.brand{
+font-size:12px;
+font-weight:800;
+letter-spacing:1.2px;
+opacity:.8;
+}
+h1{font-size:23px;margin:4px 0}
+.subtitle{font-size:13px;opacity:.8}
+
+main{
+max-width:720px;
+margin:auto;
+padding:14px;
+}
+
+.searchbox{
+background:#fff;
+border:1px solid var(--line);
+border-radius:14px;
+padding:5px 12px;
+display:flex;
+align-items:center;
+}
+input{
+border:0;
+outline:0;
+width:100%;
+font-size:18px;
+padding:12px 9px;
+background:transparent;
+}
+.notice{
+background:var(--warn);
+border:1px solid #efd995;
+border-radius:11px;
+padding:10px 12px;
+font-size:12px;
+line-height:1.4;
+margin:12px 0;
+}
+.summary{
+font-size:13px;
+color:var(--muted);
+margin:12px 2px 8px;
+}
+.card{
+background:var(--card);
+border:1px solid var(--line);
+border-radius:14px;
+padding:14px;
+margin:9px 0;
+}
+.doc{
+font-size:11px;
+font-weight:900;
+letter-spacing:.7px;
+color:var(--blue);
+}
+.title{
+font-size:17px;
+font-weight:750;
+margin:4px 0 7px;
+}
+.ref{
+display:inline-block;
+background:#edf4fb;
+border-radius:7px;
+padding:5px 8px;
+font-size:13px;
+font-weight:750;
+color:#274b6d;
+}
+.empty{
+text-align:center;
+color:var(--muted);
+padding:45px 20px;
+}
+</style>
+</head>
+
+<body>
+
+<header class="top">
+<div class="brand">G7 • GOJET AIRLINES</div>
+<h1>CRJ550 Reference Finder</h1>
+<div class="subtitle">
+Type a word or phrase to find where it is located.
+</div>
+</header>
+
+<main>
+
+<div class="searchbox">
+<input id="q"
+autocomplete="off"
+autocorrect="off"
+spellcheck="false"
+placeholder="Try: duct mon, alternate, RVSM, deicing…">
+</div>
+
+<div class="notice">
+<b>REFERENCE ONLY:</b> Use the current controlled GoJet manuals for operational decisions. Manual page numbers and sections may change with revisions.
+</div>
+
+<div id="summary" class="summary"></div>
+<div id="results"></div>
+
+</main>
+
+<script>
+
+const DATA=[
+
+["FCOM1","Page 53","Airplane Option Codes"],
+["FCOM1","Page 55","Acronyms"],
+["FCOM1","Page 71","Aircraft Dimensions"],
+["FCOM1","Page 74","Aircraft Doors"],
+["FCOM1","Page 79","Antennas"],
+["FCOM1","Page 135","Air Conditioning and Pressurization System"],
+["FCOM1","Page 848","Crew Oxygen System"],
+["FCOM1","Page 1039","Oil System General"],
+
+["FCOM2","Page 327","Hydraulic Fluid Quantity vs Temperature"],
+["FCOM2","Page 338","IRS Excessive Drift"],
+["FCOM2","Page 413","Hard Landing"],
+["FCOM2","Page 786","Oil Level Indication"],
+["FCOM2","Page 795","Engine Intake Contamination Snow Ice Frozen Precipitation"],
+["FCOM2","Page 795","Ice on Engine Fan Spinner Cone"],
+["FCOM2","Page 997","Supplemental Guidance Nuisance Messages Chapter 5 Resets"],
+["FCOM2","Page 1013","SPOST"],
+["FCOM2","Page 1037","Steering Inop"],
+["FCOM2","Page 1041","Duct Mon Fault"],
+["FCOM2","Page 1061","Aileron Rudder Trim Position Indication Failure"],
+
+["QRH1","Page 45","Engine Start External Air"],
+["QRH1","Page 47","Unpressurized Takeoff and Landing"],
+["QRH1","Page 72","Full Thrust Target vs Required Thrust"],
+["QRH1","Page 108","Stabilizer Trim Setting"],
+["QRH1","Page 114","Speedcards"],
+["QRH1","Page 161","Minimum Drag Speed Charts"],
+["QRH1","Page 164","Altitude Capability Charts"],
+["QRH1","Page 172","Actual Unfactored Landing Distance"],
+["QRH1","Page 246","Warning Messages"],
+["QRH1","Page 248","Caution Messages"],
+["QRH1","Page 316","Wind Component Charts"],
+
+["QRH2","Page 41","Table of Contents"],
+["QRH2","Page 45","Immediate Action Items"],
+["QRH2","Page 288","Aileron or Rudder Trim Runaway"],
+
+["GOM","3-1.6.6","BINGO Fuel"],
+["GOM","3-2.4.9","Takeoff Alternate Departure Alternate"],
+["GOM","3-2.4.11","Destination Alternate IFR Domestic"],
+["GOM","3-2.4.13","Second Alternate Marginal Rule"],
+["GOM","3-2.4.19","Exemption 17347 Conditional Language"],
+["GOM","3-2.5.3","Fuel Definitions"],
+["GOM","3-1.1.17","TCAS Policy"],
+["GOM","3-5.3.17","ACARS Takeoff Data"],
+["GOM","3-5.3.17.5","ACARS Limit Codes"],
+
+["SOP","1-3.19","Standard Callouts"],
+["SOP","1-4.1","Departure Briefing"],
+["SOP","1-4.13","Initial Climb Flap Retraction"],
+["SOP","1-4.21","Rejected Takeoff"],
+["SOP","1-5.11","Emergency Descent"],
+["SOP","1-6.3.3","Maneuvering Speeds"],
+["SOP","1-6.3.11","Landing With Crosswind"],
+["SOP","1-6.13","Single Engine Approach"],
+["SOP","1-7","Rejected Balked Go Around Landings"],
+["SOP","1-7.5","Go Around Single Engine Actions and Callouts"],
+["SOP","1-10.3.11","Windshear Recovery Maneuver"],
+["SOP","1-10.7.7","Brake Cooling"],
+["SOP","1-10.11","Emergency Evacuation"],
+["SOP","1-10.25","Interrupted Starts"],
+["SOP","2-2","CRJ Normal Checklist"],
+["SOP","2-5","External Walkaround"],
+["SOP","2-8","Before Start Crew Oxygen Crew Briefing"],
+
+["WOP","2-7.1","Type I Deicing Fluids"],
+["WOP","2.14","Deicing Preparation Configuration Procedure"],
+["WOP","4.4.2.1.17","METAR Codes Holdover Time HOT"],
+["WOP","4.4.2.3","Modification to Holdover Time"],
+["WOP","4.4.3","Pre Takeoff Check"],
+["WOP","4.4.5","Visual Pre Takeoff Contamination Check"],
+["WOP","4.4.7","Tactile Check"],
+["WOP","4.4.8.1","Ice Pellets Operations"],
+["WOP","7.1","Special Winter Operations Airports SWOA"],
+["WOP","7.2","Cold Weather Airports"],
+["WOP","Page 131","Type IV Holdover Times"],
+["WOP","Page 148","Allowance Times Type IV"],
+["WOP","Page 150","Snowfall Intensity Visibility"],
+
+["MEL","3.1","Notes and Definitions"],
+["MEL","3.2","Repair Intervals Category A B C D"],
+["MEL","4.2","Deferred Maintenance Items"],
+["MEL","4.8","MEL Extension Program"],
+["MEL","Page 49","EICAS Message List"],
+
+["OPS SPECS","B046","RVSM Reduced Vertical Separation Minimum"],
+["OPS SPECS","C050","Special PIC Qualification Airports"],
+["OPS SPECS","C055","Alternate Airport IFR Weather Minimums Derived Minimums"],
+["OPS SPECS","C056","IFR Takeoff Minimums"],
+["OPS SPECS","C070","Airports Authorized Scheduled Operations"],
+["OPS SPECS","C077","Terminal VFR"],
+["OPS SPECS","C078","Lower Than Standard Takeoff Minimums"]
+
+];
+
+const q=document.getElementById("q");
+const out=document.getElementById("results");
+const summary=document.getElementById("summary");
+
+function search(){
+
+let term=q.value.toLowerCase().trim();
+
+let results=DATA.filter(x=>
+(x[0]+" "+x[1]+" "+x[2])
+.toLowerCase()
+.includes(term)
+);
+
+summary.textContent=
+term ?
+results.length+" result"+(results.length===1?"":"s")+" for “"+q.value+"”"
+:
+DATA.length+" searchable references";
+
+if(!results.length){
+out.innerHTML='<div class="empty">No match found. Try fewer words, an acronym, EICAS message, system name, or manual name.</div>';
+return;
+}
+
+out.innerHTML=results.map(x=>
+'<div class="card">'+
+'<div class="doc">'+x[0]+'</div>'+
+'<div class="title">'+x[2]+'</div>'+
+'<span class="ref">'+x[1]+'</span>'+
+'</div>'
+).join("");
+
+}
+
+q.addEventListener("input",search);
+search();
+
+</script>
+
+</body>
+</html>
